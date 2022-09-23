@@ -7,56 +7,37 @@ using System.Collections.Generic;
 
 class Player
 {
-    void Main()
+    static void Main()
     {
         string[] inputs = Console.ReadLine().Split(' ');
-        int width = int.Parse(inputs[0]);
-        int height = int.Parse(inputs[1]);
-
-        int edgesCount = 0;
-        char freeCell = '0';
+        int width = int.Parse(inputs[0]); //Ширина лабиринта
+        int height = int.Parse(inputs[1]); //Длина лабиринта
+        bool[,] used = new bool[width,height]; //Массив посещённых вершин
         string[] lines = new string[height];
-
-
+        int[,] labirint = new int[width,height];
+        int[] dst;
+        char freeCell = '0';
         for (int i = 0; i < height; i++)
         {
             lines[i] = Console.ReadLine();
-            char[] line = lines[i].ToCharArray();
-            foreach (char c in line)
+            for (int j = 0; j<width; j++)
             {
-                if (c == freeCell)
+                if (lines[i][j] == freeCell)
                 {
-                    freeCell = (char)edgesCount;
-                    edgesCount++;
+                    labirint[i,j] = 0;
+                }
+                else
+                {
+                    labirint[i,j] = 1;
                 }
             }
         }
+        
+
         string side = Console.ReadLine();
-
-        for (int i = 0; i < height; i++)
-        {
-
-        }
     }
-}
-class Graph
-{
-    
-}
-class Lines
-{ 
-    
-}
-class Edge
-{
-    string Number;
-    int VisitedCount;
-
-    private Edge(string number)
+    struct cell
     {
-        this.Number = number;
+        int x, y;
     }
-
-    public string Number1 { get => Number; set => Number = value; }
-    public int VisitedCount1 { get => VisitedCount; set => VisitedCount = value; }
 }

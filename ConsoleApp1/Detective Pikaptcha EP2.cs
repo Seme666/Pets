@@ -28,34 +28,35 @@ class Player
         string side = Console.ReadLine();
     }
     static public int[,] BFS (int[,] labirint, cell s, cell t)
-    {
+    { 
+        int labirintWidth = labirint.GetLength(0);
+        int labirintHeight = labirint.GetLength(1);
+        
         //Матрица дистанций от клетки s до остальных клеток
-        int[,] distance = new int[labirint.GetLength(0) + 2, labirint.GetLength(1) + 2];
-        for (int i = 0; i < labirint.GetLength(0); i++)
+        int distanceWidth = labirint.GetLength(0)+2;
+        int distanceHeight = labirint.GetLength(1)+2;
+
+        int[,] distance = new int[distanceWidth, distanceHeight];
+        for (int i = 0; i < labirintWidth; i++)
         {
-            for (int j = 0; j < labirint.GetLength(1); j++)
+            for (int j = 0; j < labirintHeight; j++)
             {
                 if (labirint[i, j] == 0)
-                    distance[i + 1, j + 1] = -1;
+                    distance[i + 1, j + 1] = -2; //Непосещённая клетка
                 else
-                    distance[i + 1, j + 1] = 1;
+                    distance[i + 1, j + 1] = -1; //Стена
             }
         }
-        for (int i = 0; i < distance.GetLength(1); i++)
+        //Заполняем всё стенками вокруг лабиринта
+        for (int i = 0; i < distanceHeight; i++)
         {
             distance[i, 0] = 1;
             distance[0, i] = 1;
-            distance[distance.GetLength(1)-1, i] = 1;
-            distance[i,distance.GetLength(1)-1] = 1;
+            distance[distanceHeight - 1, i] = 1;
+            distance[i, distanceHeight - 1] = 1;
         }
-        int counter = 0;
-        foreach (int i in distance)
-        {
-            counter++;
-            if ((counter - 1) % 5 == 0)
-                Console.WriteLine();
-            Console.Write(i);
-        }
+
+        PrintArray(distance);
 
         int[][] steps = new int[4][]
         {
@@ -68,34 +69,33 @@ class Player
         Queue<cell> q = new Queue<cell>();
 
         q.Enqueue(s); // Ввод начальной клетки в очередь
-
-        distance[s.x, s.y] = 0;
+        distance[s.x+1, s.y+1] = 0;
 
         while (q.Count != 0)
         {
             cell c = q.Dequeue();
-            int x = c.x;
-            int y = c.y;
+            int x = c.x+1;
+            int y = c.y+1;
             foreach (int[] step in steps)
             {
                 int dx = step[0];
                 int dy = step[1];
                 int _x = x + dx;
                 int _y = y + dy;
-                if (_x > distance.GetLength(0) || _y > distance.GetLength(1))
-                if (distance[_x,_y]==-1)
+                if (distance[_x,_y]==-2)
                 {
                     distance[_x, _y] = distance[x, y] + 1;
                     cell nc = new cell()
                     {
-                        x = _x,
-                        y = _y,
+                        x = _x-1,
+                        y = _y-1,
                     };
                     q.Enqueue(nc) ;
                 }
             }
         }
-
+        Console.WriteLine("-----------------");
+        PrintArray(distance);
         return (distance);
     }
     static public int[,] ReadLabirint()
@@ -120,7 +120,20 @@ class Player
         }
         return (labirint);
     }
+    static void PrintArray(int[,] array)
+    {
+        int counter = 0;
+        foreach (int i in array)
+        {
+            counter++;
+            if ((counter - 1) % array.GetLength(0) == 0)
+                Console.WriteLine();
+            Console.Write($"\t{i}");
+        }
+        Console.WriteLine();
+    }
 }
+
 public struct cell
 {
     public int x, y;
